@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg_storage:/var/lib/postgresql:Z
+      - ./.pg_storage:/var/lib/postgresql:Z
 
 volumes:
   pg_storage:

@@ -56,3 +56,11 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /generated/prisma
+
+# Content
+uploads
+.pg_storage
+
+#certs
+certs/*
+!certs/*.example.*

@@ -8,6 +8,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator prismaClassGenerator {
+  provider = "prisma-class-generator"
+  dryRun   = false
+  output   = "../src/common/generated-classes"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -26,7 +32,7 @@ model User {
   id        String   @id @default(uuid())
   name      String   @unique
   password  String
-  image     String?
+  image     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
