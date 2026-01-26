@@ -6,14 +6,10 @@ import { UserService } from './user.service';
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
+    @UseGuards(AuthGuard)
     @Get("user/:id")
     async getUser(@Param('id') id: string) {
         return await this.userService.findById(id)
     }
 
-    @UseGuards(AuthGuard)
-    @Get("/")
-    async getUsers() {
-        return await this.userService.getUsers()
-    }
 }

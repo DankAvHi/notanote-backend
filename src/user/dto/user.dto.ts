@@ -16,9 +16,3 @@ export class FindByIdResponse implements Omit<User, 'notes'> {
     password: string;
     updatedAt: Date;
 }
-
-export class FindByNameDto {
-    @IsString()
-    @IsNotEmpty()
-    id: string
-}

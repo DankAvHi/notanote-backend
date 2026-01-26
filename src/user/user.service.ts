@@ -11,10 +11,6 @@ export class UserService {
         });
     }
 
-    async getUsers() {
-        return await this.prisma.user.findMany()
-    }
-
     async findByName(name: string) {
         return await this.prisma.user.findUnique({ where: { name } })
     }
