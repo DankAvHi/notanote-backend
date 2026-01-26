@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import * as express from 'express';
 import { AuthenticationService } from './authentication.service'; // проверь путь
 
@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
         const token = cookies?.['access_token'];
 
         if (!token) {
-            throw new UnauthorizedException('Токен не найден');
+            throw new ForbiddenException('Not logged in');
         }
 
         try {
@@ -22,8 +22,8 @@ export class AuthGuard implements CanActivate {
             request['user'] = payload;
 
             return true;
-        } catch (error) {
-            throw new UnauthorizedException(`Невалидный или просроченный токен ${error}`);
+        } catch {
+            throw new ForbiddenException(`Error when verify logged session`);
         }
     }
 }

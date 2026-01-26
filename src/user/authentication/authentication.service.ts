@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "@prisma/client";
-import { compare } from "bcryptjs";
+import { compare, genSaltSync, hashSync } from "bcryptjs";
 import { UserService } from "../user.service";
-import { LoginUserDto } from "./dto/authenticate.dto";
-import { UnauthenticatedException, } from "./exception/unauthenticated.exception";
+import { CreateUserDto, LoginUserDto } from "./dto/authenticate.dto";
+import { UnauthenticatedException, UserExistException, } from "./exception/unauthenticated.exception";
 
 @Injectable()
 export class AuthenticationService {
@@ -27,6 +27,24 @@ export class AuthenticationService {
         }
 
         const accessToken = await this.getAccesToken(user)
+
+        return { accessToken };
+    }
+
+    async register(dto: CreateUserDto): Promise<{
+        accessToken: string;
+    }> {
+        const existedUser = await this.usersService.findByName(dto.name);
+
+        if (existedUser !== null) {
+            throw new UserExistException();
+        }
+
+        const hashedPassword = hashSync(dto.password, genSaltSync())
+
+        const newUser = await this.usersService.create(dto.name, hashedPassword)
+
+        const accessToken = await this.getAccesToken(newUser)
 
         return { accessToken };
     }

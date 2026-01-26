@@ -25,3 +25,7 @@ export class LoginUserDto {
 
 export class LoginUserResponse { }
 
+
+export class SignOutDto {
+
+}

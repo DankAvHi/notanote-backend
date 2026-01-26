@@ -19,4 +19,8 @@ export class UserService {
         return await this.prisma.user.findUnique({ where: { name } })
     }
 
+    async create(name: string, password: string) {
+        return await this.prisma.user.create({ data: { name, password } })
+    }
+
 }

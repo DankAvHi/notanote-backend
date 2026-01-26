@@ -1,5 +1,5 @@
 import { Note } from './note';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class User {
   @ApiProperty({ type: String })
@@ -11,8 +11,8 @@ export class User {
   @ApiProperty({ type: String })
   password: string;
 
-  @ApiProperty({ type: String })
-  image: string;
+  @ApiPropertyOptional({ type: String })
+  image?: string;
 
   @ApiProperty({ type: Date })
   createdAt: Date;
