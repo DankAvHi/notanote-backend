@@ -1,5 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
+import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
 import cookieParser from 'cookie-parser';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,6 +12,9 @@ async function bootstrap() {
     key: fs.readFileSync(path.resolve(__dirname, '../certs/localhost-key.pem')),
     cert: fs.readFileSync(path.resolve(__dirname, '../certs/localhost.pem')),
   };
+
+
+
 
   const app = await NestFactory.create(AppModule, { httpsOptions });
 
@@ -25,6 +30,17 @@ async function bootstrap() {
     origin: 'https://localhost:3000',
     credentials: true,
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('NotANote API')
+    .setDescription('Backend API documentation')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 8000);
 }

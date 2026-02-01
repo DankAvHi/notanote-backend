@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Post, Res, UseGuards } from "@nestjs/common";
 import * as express from "express";
+import { CurrentUser } from "../user.decorator";
 import { AuthGuard } from "./authentication.guard";
 import { AuthenticationService } from "./authentication.service";
 import { CreateUserDto, LoginUserDto } from "./dto/authenticate.dto";
@@ -44,7 +45,7 @@ export class AuthenticationController {
 
     @Get("verify")
     @UseGuards(AuthGuard)
-    verify() {
-        return { result: true };
+    verify(@CurrentUser() user: { id: string, name: string }): { id: string, name: string } {
+        return user;
     }
 }

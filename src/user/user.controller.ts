@@ -7,8 +7,9 @@ export class UserController {
     constructor(private readonly userService: UserService) { }
 
     @UseGuards(AuthGuard)
-    @Get("user/:id")
+    @Get(":id")
     async getUser(@Param('id') id: string) {
+        console.log(id)
         return await this.userService.findById(id)
     }
 
