@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
 import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
 import cookieParser from 'cookie-parser';
+import * as express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { AppModule } from './app/app.module';
@@ -12,9 +13,6 @@ async function bootstrap() {
     key: fs.readFileSync(path.resolve(__dirname, '../certs/localhost-key.pem')),
     cert: fs.readFileSync(path.resolve(__dirname, '../certs/localhost.pem')),
   };
-
-
-
 
   const app = await NestFactory.create(AppModule, { httpsOptions });
 
@@ -41,6 +39,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('api', app, document);
+
+  app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
   await app.listen(process.env.PORT ?? 8000);
 }

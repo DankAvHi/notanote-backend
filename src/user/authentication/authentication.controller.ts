@@ -9,7 +9,6 @@ import { CreateUserDto, LoginUserDto } from "./dto/authenticate.dto";
 export class AuthenticationController {
     constructor(private readonly authenticationService: AuthenticationService) { }
 
-    @HttpCode(200)
     @Post("login")
     async login(@Body() body: LoginUserDto, @Res({ passthrough: true }) res: express.Response): Promise<void> {
         const { accessToken } = await this.authenticationService.login(body);
@@ -23,7 +22,6 @@ export class AuthenticationController {
 
     }
 
-    @HttpCode(200)
     @Post("register")
     async register(@Body() body: CreateUserDto, @Res({ passthrough: true }) res: express.Response): Promise<void> {
         const { accessToken } = await this.authenticationService.register(body);
@@ -40,7 +38,13 @@ export class AuthenticationController {
     @HttpCode(200)
     @Delete("/")
     signOut(@Res({ passthrough: true }) res: express.Response): void {
-        res.clearCookie('access_token')
+        res.cookie('access_token', '', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 0,
+        });
     }
 
     @Get("verify")

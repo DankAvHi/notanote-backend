@@ -1,5 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
@@ -13,10 +14,13 @@ async function main() {
     await prisma.note.deleteMany();
     await prisma.user.deleteMany();
 
+    const password1Hash: string = await bcrypt.hash('password123', bcrypt.genSaltSync(10));
+    const password2Hash: string = await bcrypt.hash('securepassword', bcrypt.genSaltSync(10));
+
     await prisma.user.create({
         data: {
             name: 'Dan',
-            password: 'password123',
+            password: password1Hash,
             image: 'avatar1.png',
             notes: {
                 create: [
@@ -32,7 +36,7 @@ async function main() {
     await prisma.user.create({
         data: {
             name: 'Alex',
-            password: 'securepassword',
+            password: password2Hash,
             image: 'avatar2.png',
             notes: {
                 create: [
