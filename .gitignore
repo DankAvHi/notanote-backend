@@ -64,3 +64,5 @@ uploads
 #certs
 certs/*
 !certs/*.example.*
+Caddyfile
+cors.ts

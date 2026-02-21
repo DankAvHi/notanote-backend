@@ -1,0 +1,33 @@
+example.com {
+    @internal remote_ip 10.89.0.0/16 127.0.0.1 ::1
+    handle @internal {
+
+        @backend path /backend*
+        handle @backend {
+            uri strip_prefix /backend
+            reverse_proxy host.docker.internal:8000
+        }
+
+        handle {
+            reverse_proxy host.docker.internal:3000
+        }
+    }
+    
+    handle {
+        # Remove it for production
+        basic_auth {
+            name hash-password
+        }
+        # 
+
+        @backend path /backend*
+        handle @backend {
+            uri strip_prefix /backend
+            reverse_proxy host.docker.internal:8000
+        }
+
+        handle {
+            reverse_proxy host.docker.internal:3000
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Post, Res, UseGuards } from "@nestjs/common";
 import * as express from "express";
+import { isProduction } from "~/common/config";
 import { CurrentUser } from "../user.decorator";
 import { AuthGuard } from "./authentication.guard";
 import { AuthenticationService } from "./authentication.service";
@@ -12,10 +13,9 @@ export class AuthenticationController {
     @Post("login")
     async login(@Body() body: LoginUserDto, @Res({ passthrough: true }) res: express.Response): Promise<void> {
         const { accessToken } = await this.authenticationService.login(body);
-
         res.cookie('access_token', accessToken, {
-            httpOnly: true,
-            secure: true,
+            httpOnly: isProduction,
+            secure: isProduction,
             sameSite: 'lax',
             maxAge: 1000 * 60 * 60 * 24 * 7,
         });
@@ -27,8 +27,8 @@ export class AuthenticationController {
         const { accessToken } = await this.authenticationService.register(body);
 
         res.cookie('access_token', accessToken, {
-            httpOnly: true,
-            secure: true,
+            httpOnly: isProduction,
+            secure: isProduction,
             sameSite: 'lax',
             maxAge: 1000 * 60 * 60 * 24 * 7,
         });
@@ -39,8 +39,8 @@ export class AuthenticationController {
     @Delete("/")
     signOut(@Res({ passthrough: true }) res: express.Response): void {
         res.cookie('access_token', '', {
-            httpOnly: true,
-            secure: true,
+            httpOnly: isProduction,
+            secure: isProduction,
             sameSite: 'lax',
             path: '/',
             maxAge: 0,

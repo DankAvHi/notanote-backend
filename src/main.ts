@@ -4,17 +4,13 @@ import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
 import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
 import cookieParser from 'cookie-parser';
 import * as express from 'express';
-import * as fs from 'fs';
 import * as path from 'path';
 import { AppModule } from './app/app.module';
+import { corsConfig } from './common/cors';
 
 async function bootstrap() {
-  const httpsOptions = {
-    key: fs.readFileSync(path.resolve(__dirname, '../certs/localhost-key.pem')),
-    cert: fs.readFileSync(path.resolve(__dirname, '../certs/localhost.pem')),
-  };
 
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+  const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -24,10 +20,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  app.enableCors({
-    origin: 'https://localhost:3000',
-    credentials: true,
-  });
+  app.enableCors(corsConfig);
 
   const config = new DocumentBuilder()
     .setTitle('NotANote API')
@@ -38,7 +31,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
