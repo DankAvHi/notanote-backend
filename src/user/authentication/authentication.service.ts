@@ -5,6 +5,7 @@ import { compare, genSaltSync, hashSync } from "bcryptjs";
 import { UserService } from "../user.service";
 import { CreateUserDto, LoginUserDto } from "./dto/authenticate.dto";
 import { UnauthenticatedException, UserExistException, } from "./exception/unauthenticated.exception";
+import { UserPayload } from "./types";
 
 @Injectable()
 export class AuthenticationService {
@@ -65,16 +66,15 @@ export class AuthenticationService {
     }
 
     async verify(token: string) {
-        type TokenData = {
-            name: string;
-            id: string;
-        };
         try {
-            const user = await this.jwtService.verifyAsync<TokenData>(token, {
+            const tokenData = await this.jwtService.verifyAsync<UserPayload>(token, {
                 secret: "76a0819fb691a533208fd8453e2a42b4248e2ced1c4d339f550c8f59425b9af2",
             });
 
-            return user;
+            const user = await this.usersService.findById(tokenData.id)
+
+            if (user) return user
+            else throw new UnauthenticatedException();
         } catch {
             throw new UnauthenticatedException();
         }

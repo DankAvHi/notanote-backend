@@ -49,7 +49,7 @@ export class AuthenticationController {
 
     @Get("verify")
     @UseGuards(AuthGuard)
-    verify(@CurrentUser() user: { id: string, name: string }): { id: string, name: string } {
+    verify(@CurrentUser() user: { id: string, name: string }) {
         return user;
     }
 }

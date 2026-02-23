@@ -5,14 +5,17 @@ export class Note {
   @ApiProperty({ type: String })
   id: string;
 
-  @ApiProperty({ type: String })
-  text: string;
-
   @ApiProperty({ type: Date })
   createdAt: Date;
 
   @ApiProperty({ type: Date })
   updatedAt: Date;
+
+  @ApiProperty({ type: String })
+  text: string;
+
+  @ApiProperty({ type: Boolean })
+  isChecked: boolean;
 
   @ApiProperty({ type: () => User })
   author: User;

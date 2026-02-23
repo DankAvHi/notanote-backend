@@ -8,11 +8,19 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<express.Request>();
+        const response = context.switchToHttp().getResponse<express.Response>();
 
         const cookies = request.cookies as Record<string, string | undefined>;
         const token = cookies?.['access_token'];
 
         if (!token) {
+            response.cookie('access_token', '', {
+                httpOnly: true,
+                secure: false,
+                sameSite: 'lax',
+                path: '/',
+                maxAge: 0,
+            });
             throw new ForbiddenException('Not logged in');
         }
 
@@ -23,6 +31,13 @@ export class AuthGuard implements CanActivate {
 
             return true;
         } catch {
+            response.cookie('access_token', '', {
+                httpOnly: true,
+                secure: false,
+                sameSite: 'lax',
+                path: '/',
+                maxAge: 0,
+            });
             throw new ForbiddenException(`Error when verify logged session`);
         }
     }
