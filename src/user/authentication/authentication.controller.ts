@@ -19,6 +19,12 @@ export class AuthenticationController {
             sameSite: 'lax',
             maxAge: 1000 * 60 * 60 * 24 * 7,
         });
+        res.cookie('is_auth', true, {
+            httpOnly: false,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        })
 
     }
 
@@ -32,7 +38,12 @@ export class AuthenticationController {
             sameSite: 'lax',
             maxAge: 1000 * 60 * 60 * 24 * 7,
         });
-
+        res.cookie('is_auth', true, {
+            httpOnly: false,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        })
     }
 
     @HttpCode(200)
@@ -45,6 +56,13 @@ export class AuthenticationController {
             path: '/',
             maxAge: 0,
         });
+        res.cookie('is_auth', false, {
+            httpOnly: false,
+            secure: false,
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 0
+        })
     }
 
     @Get("verify")

@@ -21,6 +21,13 @@ export class AuthGuard implements CanActivate {
                 path: '/',
                 maxAge: 0,
             });
+            response.cookie('is_auth', false, {
+                httpOnly: false,
+                secure: false,
+                sameSite: 'lax',
+                path: '/',
+                maxAge: 0
+            })
             throw new ForbiddenException('Not logged in');
         }
 
@@ -38,6 +45,13 @@ export class AuthGuard implements CanActivate {
                 path: '/',
                 maxAge: 0,
             });
+            response.cookie('is_auth', false, {
+                httpOnly: false,
+                secure: false,
+                sameSite: 'lax',
+                path: '/',
+                maxAge: 0
+            })
             throw new ForbiddenException(`Error when verify logged session`);
         }
     }
