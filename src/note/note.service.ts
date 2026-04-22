@@ -11,7 +11,7 @@ export class NoteService {
     }
 
     async getUserNotes(authorId: string) {
-        return await this.prisma.note.findMany({ where: { authorId } })
+        return await this.prisma.note.findMany({ where: { authorId }, orderBy: { updatedAt: "desc" } })
     }
 
     async getNote(id: string) {
@@ -35,6 +35,11 @@ export class NoteService {
     async deleteUserNote(authorId: string, id: string) {
         return await this.prisma.note.delete({ where: { authorId, id } })
     }
+
+    async deleteAllUserNotes(authorId: string) {
+        return await this.prisma.note.deleteMany({ where: { authorId } })
+    }
+
 
     async updateNote(dto: UpdateNoteDto) {
         const { id, isChecked, text } = dto

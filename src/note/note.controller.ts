@@ -35,4 +35,9 @@ export class NoteController {
         return this.service.deleteUserNote(user.id, id)
     }
 
+    @Delete()
+    deleteAllNotes(@CurrentUser() user: UserPayload) {
+        return this.service.deleteAllUserNotes(user.id)
+    }
+
 }

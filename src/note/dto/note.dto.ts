@@ -1,10 +1,18 @@
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Note } from '../../common/generated-classes/note';
 
 export class CreateNoteDto {
     @IsNotEmpty()
     @IsString()
+    id!: string
+
+    @IsNotEmpty()
+    @IsString()
     text!: string
+
+    @IsNotEmpty()
+    @IsBoolean()
+    isChecked!: boolean
 }
 
 export class CreateNoteResponse implements Omit<Note, 'author'> {
@@ -21,13 +29,13 @@ export class UpdateNoteDto {
     @IsString()
     id!: string
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    text!: string
+    text?: string
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsBoolean()
-    isChecked!: boolean
+    isChecked?: boolean
 }
 
 export class UpdateNoteResponse implements Omit<Note, 'author'> {
