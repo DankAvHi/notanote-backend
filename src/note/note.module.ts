@@ -6,6 +6,7 @@ import { NoteService } from './note.service';
 @Module({
   imports: [AuthenticationModule],
   providers: [NoteService],
-  controllers: [NoteController]
+  controllers: [NoteController],
+  exports: [NoteService]
 })
 export class NoteModule { }

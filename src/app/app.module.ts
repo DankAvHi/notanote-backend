@@ -9,11 +9,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [ServeStaticModule.forRoot({
-    rootPath: join(process.cwd(), 'uploads'),
-    serveRoot: '/uploads',
-  }), PrismaModule, UserModule, AuthenticationModule, NoteModule],
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+    }),
+    PrismaModule,
+    UserModule,
+    AuthenticationModule,
+    NoteModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

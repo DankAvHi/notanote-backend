@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "@prisma/client";
 import { compare, genSaltSync, hashSync } from "bcryptjs";
+import { PrismaService } from "~/prisma/prisma.service";
 import { UserService } from "../user.service";
 import { CreateUserDto, LoginUserDto } from "./dto/authenticate.dto";
 import { UnauthenticatedException, UserExistException, } from "./exception/unauthenticated.exception";
@@ -12,7 +13,9 @@ export class AuthenticationService {
     constructor(
         private readonly usersService: UserService,
         private readonly jwtService: JwtService,
+        private prisma: PrismaService
     ) { }
+
 
     async login(dto: LoginUserDto): Promise<{
         accessToken: string;
@@ -78,5 +81,23 @@ export class AuthenticationService {
         } catch {
             throw new UnauthenticatedException();
         }
+    }
+
+    async changePassword(id: string, oldPassword: string, newPassword: string) {
+        const user = await this.usersService.findById(id);
+
+        if (user === null) {
+            throw new UnauthenticatedException();
+        }
+
+        if (!(await compare(oldPassword, user.password))) {
+            throw new UnauthenticatedException();
+        }
+
+        const newUser = await this.prisma.user.update({ where: { id }, data: { password: newPassword } })
+
+        const accessToken = await this.getAccesToken(newUser)
+
+        return { accessToken };
     }
 }

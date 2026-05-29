@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Patch, Post, Res, UseGuards } from "@nestjs/common";
 import * as express from "express";
 import { isProduction } from "~/common/config";
 import { CurrentUser } from "../user.decorator";
 import { AuthGuard } from "./authentication.guard";
 import { AuthenticationService } from "./authentication.service";
-import { CreateUserDto, LoginUserDto } from "./dto/authenticate.dto";
+import { ChangePasswordDto, CreateUserDto, LoginUserDto } from "./dto/authenticate.dto";
+import type { UserPayload } from "./types";
 
 @Controller("auth")
 export class AuthenticationController {
@@ -69,5 +70,10 @@ export class AuthenticationController {
     @UseGuards(AuthGuard)
     verify(@CurrentUser() user: { id: string, name: string }) {
         return user;
+    }
+
+    @Patch()
+    async changePassword(@CurrentUser() user: UserPayload, @Body() changePasswordDto: ChangePasswordDto) {
+        return await this.authenticationService.changePassword(user.id, changePasswordDto.oldPassword, changePasswordDto.newPassword)
     }
 }
