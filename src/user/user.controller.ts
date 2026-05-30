@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   FileTypeValidator,
@@ -11,14 +12,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as express from 'express';
 import 'multer';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { isProduction } from '~/common/config';
 import { NoteService } from '~/note/note.service';
 import { AuthGuard } from './authentication/authentication.guard';
+import { ChangePasswordDto } from './authentication/dto/authenticate.dto';
 import type { UserPayload } from './authentication/types';
 import { CurrentUser } from './user.decorator';
 import { UserService } from './user.service';
@@ -29,6 +31,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly noteService: NoteService,
+    private configService: ConfigService,
   ) {}
 
   @Get(':id')
@@ -46,8 +49,8 @@ export class UserController {
     );
     const deletedUser = await this.userService.delete(user.id);
     res.cookie('access_token', '', {
-      httpOnly: isProduction,
-      secure: isProduction,
+      httpOnly: this.configService.get('NODE_ENV') === 'production',
+      secure: this.configService.get('NODE_ENV') === 'production',
       sameSite: 'lax',
       path: '/',
       maxAge: 0,
@@ -94,5 +97,17 @@ export class UserController {
     picture: Express.Multer.File,
   ) {
     await this.userService.patchPicture(user.id, picture);
+  }
+
+  @Patch()
+  async changePassword(
+    @CurrentUser() user: UserPayload,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return await this.userService.changePassword(
+      user.id,
+      changePasswordDto.oldPassword,
+      changePasswordDto.newPassword,
+    );
   }
 }

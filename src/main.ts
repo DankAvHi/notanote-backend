@@ -9,31 +9,35 @@ import { AppModule } from './app/app.module';
 import { corsConfig } from './common/cors';
 
 async function bootstrap() {
-
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   app.use(cookieParser());
 
   app.enableCors(corsConfig);
 
-  const config = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('NotANote API')
     .setDescription('Backend API documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
 
   SwaggerModule.setup('swagger', app, document);
 
-  app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+  app.use(
+    '/uploads',
+    express.static(path.join(__dirname, '..', 'uploads')),
+  );
 
   await app.listen(process.env.PORT ?? 8000);
 }

@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { compare, genSaltSync, hashSync } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuthenticationService } from './authentication/authentication.service';
+import { UnauthenticatedException } from './authentication/exception/unauthenticated.exception';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject(forwardRef(() => AuthenticationService))
+    private readonly authenticationService: AuthenticationService,
+    private prisma: PrismaService,
+  ) {}
 
   async findById(id: string) {
     return await this.prisma.user.findUnique({
@@ -32,5 +39,33 @@ export class UserService {
         image: picture.path.split('/')[1],
       },
     });
+  }
+
+  async changePassword(
+    id: string,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.findById(id);
+
+    if (user === null) {
+      throw new UnauthenticatedException();
+    }
+
+    if (!(await compare(oldPassword, user.password))) {
+      throw new UnauthenticatedException();
+    }
+
+    const hashedPassword = hashSync(newPassword, genSaltSync());
+
+    const newUser = await this.prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword },
+    });
+
+    const accessToken =
+      await this.authenticationService.getAccesToken(newUser);
+
+    return { accessToken };
   }
 }
